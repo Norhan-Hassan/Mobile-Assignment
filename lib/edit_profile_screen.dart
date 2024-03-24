@@ -4,7 +4,6 @@ class EditProfileScreen extends StatefulWidget {
   @override
   _EditProfileScreenState createState() => _EditProfileScreenState();
 }
-
 class _EditProfileScreenState extends State<EditProfileScreen> {
   TextEditingController _nameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
@@ -21,22 +20,25 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            TextField(
+            TextFormField(
+              obscureText: true,
               controller: _nameController,
               decoration: InputDecoration(labelText: 'Name'),
+                validator: _validateName,
             ),
-            TextField(
+            TextFormField(
+              obscureText: true,
               controller: _emailController,
               decoration: InputDecoration(labelText: 'Email'),
+              validator: _validateEmail,
             ),
-            TextField(
+            TextFormField(
+              obscureText: true,
               controller: _passwordController,
               decoration: InputDecoration(labelText: 'New Password'),
+              validator: _validatePassword,
             ),
-            TextField(
-              controller: _levelController,
-              decoration: InputDecoration(labelText: 'Level'),
-            ),
+
 
 
             SizedBox(height: 20),
@@ -52,7 +54,37 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       ),
     );
   }
-
+  String? _validateEmail(String? value) {
+    final RegExp regex = RegExp(r'^\d+@stud\.fci-cu\.edu\.eg$');
+    if (!regex.hasMatch(value!)) {
+      return 'Enter a valid student email address';
+    }
+    return null;
+  }
+  String? _validateID(String? value)
+  {
+    if (value == null || value.isEmpty) {
+      return 'Please enter student ID';
+    }
+    return null;
+  }
+  String? _validateName(String? value)
+  {
+    if (value == null || value.isEmpty) {
+      return 'Please enter name';
+    }
+    return null;
+  }
+  String? _validatePassword(String? value)
+  {
+    if (value == null || value.isEmpty) {
+      return 'Please enter password';
+    }
+    if (value.length < 8) {
+      return 'Password must be at least 8 characters';
+    }
+    return null;
+  }
   void saveProfile() {
     // Implement saving profile logic here
     String name = _nameController.text;
