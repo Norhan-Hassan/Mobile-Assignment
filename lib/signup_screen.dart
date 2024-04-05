@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
+import 'database_helper.dart';
+import 'login_screen.dart';
 
 class SignupScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text('Signup Screen'),
-      //),
       body: SignupBody(),
     );
   }
@@ -34,10 +33,12 @@ class SignupBody extends StatelessWidget {
             padding: const EdgeInsets.all(20.0),
             child: SignupForm(),
           ),
-
           GestureDetector(
             onTap: () {
-              Navigator.of(context).pop();
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => LoginForm()),
+              );
             },
             child: Text(
               'Already have an account? Login',
@@ -80,22 +81,22 @@ class _SignupFormState extends State<SignupForm> {
     }
     return null;
   }
-  String? _validateID(String? value)
-  {
+
+  String? _validateID(String? value) {
     if (value == null || value.isEmpty) {
       return 'Please enter student ID';
     }
     return null;
   }
-  String? _validateName(String? value)
-  {
+
+  String? _validateName(String? value) {
     if (value == null || value.isEmpty) {
       return 'Please enter name';
     }
     return null;
   }
-  String? _validatePassword(String? value)
-  {
+
+  String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) {
       return 'Please enter password';
     }
@@ -113,28 +114,29 @@ class _SignupFormState extends State<SignupForm> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           TextFormField(
-              controller: _nameController,
-              decoration: InputDecoration(
-                labelText: 'Name',
-                hintText: 'Enter your name',
-                prefixIcon: Icon(Icons.person),
-                border: OutlineInputBorder(),
-              ),
-              validator: _validateName
-
+            controller: _nameController,
+            decoration: InputDecoration(
+              labelText: 'Name',
+              hintText: 'Enter your name',
+              prefixIcon: Icon(Icons.person),
+              border: OutlineInputBorder(),
+            ),
+            validator: _validateName,
           ),
           SizedBox(height: 10),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Container(
-              child: Row( // Use Row instead of Column
+              child: Row(
+                // Use Row instead of Column
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Icon(
                     Icons.people,
                   ),
                   SizedBox(width: 10), // Adjust spacing between icon and text
-                  Column( // Wrap Gender label and Radio buttons in a Column
+                  Column(
+                    // Wrap Gender label and Radio buttons in a Column
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
@@ -157,7 +159,8 @@ class _SignupFormState extends State<SignupForm> {
                                     _selectedGender = value;
                                   });
                                 },
-                                activeColor: Colors.teal, // Customize active radio color
+                                activeColor:
+                                    Colors.teal, // Customize active radio color
                               ),
                               Text(
                                 gender,
@@ -166,7 +169,9 @@ class _SignupFormState extends State<SignupForm> {
                                   fontSize: 14,
                                 ),
                               ),
-                              SizedBox(width: 50), // Adjust spacing between radio buttons
+                              SizedBox(
+                                  width:
+                                      50), // Adjust spacing between radio buttons
                             ],
                           );
                         }).toList(),
@@ -190,14 +195,14 @@ class _SignupFormState extends State<SignupForm> {
           ),
           SizedBox(height: 10),
           TextFormField(
-              controller: _studentIdController,
-              decoration: InputDecoration(
-                labelText: 'Student ID',
-                hintText: 'Enter your student ID',
-                prefixIcon: Icon(Icons.confirmation_number),
-                border: OutlineInputBorder(),
-              ),
-              validator: _validateID
+            controller: _studentIdController,
+            decoration: InputDecoration(
+              labelText: 'Student ID',
+              hintText: 'Enter your student ID',
+              prefixIcon: Icon(Icons.confirmation_number),
+              border: OutlineInputBorder(),
+            ),
+            validator: _validateID,
           ),
           SizedBox(height: 10),
           DropdownButtonFormField<String>(
@@ -222,15 +227,15 @@ class _SignupFormState extends State<SignupForm> {
           ),
           SizedBox(height: 10),
           TextFormField(
-              controller: _passwordController,
-              obscureText: true,
-              decoration: InputDecoration(
-                labelText: 'Password',
-                hintText: 'Enter your password',
-                prefixIcon: Icon(Icons.lock),
-                border: OutlineInputBorder(),
-              ),
-              validator: _validatePassword
+            controller: _passwordController,
+            obscureText: true,
+            decoration: InputDecoration(
+              labelText: 'Password',
+              hintText: 'Enter your password',
+              prefixIcon: Icon(Icons.lock),
+              border: OutlineInputBorder(),
+            ),
+            validator: _validatePassword,
           ),
           SizedBox(height: 10),
           TextFormField(
@@ -257,10 +262,22 @@ class _SignupFormState extends State<SignupForm> {
             padding: const EdgeInsets.symmetric(horizontal: 35),
             child: MaterialButton(
               minWidth: double.infinity,
-              onPressed: () {
+              onPressed: () async {
                 if (_formKey.currentState!.validate()) {
-                  // Perform signup
-                  // If signup is successful, navigate to the appropriate screen
+                  // If form is valid, save user data to database
+                  bool result = await _saveUserData();
+                  if (result) {
+                    // Sign up successful
+                    // Navigate to the appropriate screen
+                  } else {
+                    // Error handling
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Sign up failed. Please try again.'),
+                        duration: Duration(seconds: 3),
+                      ),
+                    );
+                  }
                 }
               },
               child: Text('Signup'),
@@ -271,5 +288,30 @@ class _SignupFormState extends State<SignupForm> {
         ],
       ),
     );
+  }
+
+  Future<bool> _saveUserData() async {
+    // Construct user data
+    Map<String, dynamic> userData = {
+      'name': _nameController.text,
+      'email': _emailController.text,
+      'gender': _selectedGender,
+      'studentId': _studentIdController.text,
+      'level': _selectedLevel,
+      'password': _passwordController.text,
+    };
+
+    // Save user data to the database
+    try {
+      int userId = await DatabaseHelper.instance.insert(userData);
+      if (userId > 0) {
+        return true; // Sign up successful
+      } else {
+        return false; // Sign up failed
+      }
+    } catch (e) {
+      print("Error saving user data: $e");
+      return false; // Sign up failed due to an error
+    }
   }
 }
