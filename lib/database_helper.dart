@@ -61,4 +61,23 @@ class DatabaseHelper {
       return false;
     }
   }
+  Future<Map<String, dynamic>?> getUserByName(String name) async {
+  try {
+    Database db = await database;
+    List<Map<String, dynamic>> result = await db.query(
+      'users',
+      where: 'name = ?',
+      whereArgs: [name],
+    );
+    if (result.isNotEmpty) {
+      // User found, return user data
+      return result.first;
+    } else {
+      return null; // User not found
+    }
+  } catch (e) {
+    print('Error fetching user by name: $e');
+    return null; // Return null in case of any error
+  }
+}
 }

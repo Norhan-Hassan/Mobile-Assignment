@@ -1,7 +1,7 @@
-// login_form.dart
 import 'package:flutter/material.dart';
 import 'database_helper.dart';
 import 'profile_screen.dart';
+import 'signup_screen.dart';
 
 class LoginForm extends StatefulWidget {
   @override
@@ -78,14 +78,31 @@ class _LoginFormState extends State<LoginForm> {
                             _passwordController.text,
                           );
                           if (loggedIn) {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(builder: (context) => ProfileScreen(user: User(
-                                name: _nameController.text,
-                                email: "", // Add user email if available
-                                imagePath: "assets/default.jpg", // Provide user image path
-                              ))),
-                            );
+                            // Retrieve user data from the database
+                            Map<String, dynamic>? userData = await DatabaseHelper.instance.getUserByName(_nameController.text);
+                            if (userData != null) {
+                              // Navigate to the profile screen with user data
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ProfileScreen(
+                                    user: User(
+                                      name: userData['name'],
+                                      email: userData['email'],
+                                      gender: userData['gender'],
+                                      studentId: userData['studentId'],
+                                      level: userData['level'],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('User data not found.'),
+                                ),
+                              );
+                            }
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
@@ -98,6 +115,22 @@ class _LoginFormState extends State<LoginForm> {
                       child: Text('Login'),
                     ),
                   ],
+                ),
+              ),
+              SizedBox(height: 10), // Add some spacing
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SignupScreen()),
+                  );
+                },
+                child: Text(
+                  'Don\'t have an account? Sign up',
+                  style: TextStyle(
+                    color: Colors.blue,
+                    decoration: TextDecoration.underline,
+                  ),
                 ),
               ),
             ],

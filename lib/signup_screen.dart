@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'database_helper.dart';
 import 'login_screen.dart';
+import 'profile_screen.dart';
 
 class SignupScreen extends StatelessWidget {
   @override
@@ -291,27 +292,53 @@ class _SignupFormState extends State<SignupForm> {
   }
 
   Future<bool> _saveUserData() async {
-    // Construct user data
-    Map<String, dynamic> userData = {
-      'name': _nameController.text,
-      'email': _emailController.text,
-      'gender': _selectedGender,
-      'studentId': _studentIdController.text,
-      'level': _selectedLevel,
-      'password': _passwordController.text,
-    };
+  // Construct user data
+  Map<String, dynamic> userData = {
+    'name': _nameController.text,
+    'email': _emailController.text,
+    'gender': _selectedGender,
+    'studentId': _studentIdController.text,
+    'level': _selectedLevel,
+    'password': _passwordController.text,
+  };
 
-    // Save user data to the database
-    try {
-      int userId = await DatabaseHelper.instance.insert(userData);
-      if (userId > 0) {
-        return true; // Sign up successful
+  // Save user data to the database
+  try {
+    int userId = await DatabaseHelper.instance.insert(userData);
+    if (userId > 0) {
+      // Sign up successful
+      // Fetch the user data from the database
+      Map<String, dynamic>? userFromDB =
+          await DatabaseHelper.instance.getUserByName(_nameController.text);
+      if (userFromDB != null) {
+        // Navigate to the profile screen with user data
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProfileScreen(
+              user: User(
+                // Pass the user data retrieved from the database
+                name: userFromDB['name'],
+                email: userFromDB['email'],
+                gender: userFromDB['gender'],
+                studentId: userFromDB['studentId'],
+                level: userFromDB['level'],
+                // Add other user data fields here
+              ),
+            ),
+          ),
+        );
+        return true;
       } else {
-        return false; // Sign up failed
+        return false; // User data not found
       }
-    } catch (e) {
-      print("Error saving user data: $e");
-      return false; // Sign up failed due to an error
+    } else {
+      return false; // Sign up failed
     }
+  } catch (e) {
+    print("Error saving user data: $e");
+    return false; // Sign up failed due to an error
   }
+}
+
 }

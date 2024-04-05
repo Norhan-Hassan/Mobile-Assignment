@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
 
 import 'edit_profile_screen.dart';
-class User
-{
-  final String imagePath;
+
+class User {
   final String name;
   final String email;
+  final String gender; // Add gender field
+  final String studentId; // Add student ID field
+  final String level; // Add level field
 
   const User({
-    required this.imagePath,
     required this.name,
     required this.email,
+    required this.gender,
+    required this.studentId,
+    required this.level,
   });
 }
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -21,11 +26,15 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: ProfileScreen(user: User(
-        name: "Norhan Hassan",
-        email: "2020@stu-fci.edu.eg",
-        imagePath:"assets/default.jpg",
-      )),
+      home: ProfileScreen(
+        user: const User(
+          name: "Norhan Hassan",
+          email: "2020@stu-fci.edu.eg",
+          gender: "Female", // Add gender data
+          studentId: "123456", // Add student ID data
+          level: "3", // Add level data
+        ),
+      ),
     );
   }
 }
@@ -58,26 +67,29 @@ class ProfileBody extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          CircleAvatar(
-            radius: 100,
-            child: ClipOval(
-              child: Image.asset(
-                 user.imagePath,
-                 fit: BoxFit.cover,
-                 width: 200, // Adjust the width as needed
-                 height: 200, // Adjust the height as needed
-             ),
-            ),
-          ),
           SizedBox(height: 20),
           Text(
             user.name,
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
-
           SizedBox(height: 10),
           Text(
             user.email,
+            style: TextStyle(fontSize: 18),
+          ),
+          SizedBox(height: 10),
+          Text(
+            'Gender: ${user.gender}', // Display gender
+            style: TextStyle(fontSize: 18),
+          ),
+          SizedBox(height: 10),
+          Text(
+            'Student ID: ${user.studentId}', // Display student ID
+            style: TextStyle(fontSize: 18),
+          ),
+          SizedBox(height: 10),
+          Text(
+            'Level: ${user.level}', // Display level
             style: TextStyle(fontSize: 18),
           ),
           SizedBox(height: 20),
@@ -97,7 +109,6 @@ class ProfileBody extends StatelessWidget {
               textStyle: TextStyle(fontSize: 20),
               padding: EdgeInsets.symmetric(horizontal: 40, vertical: 12),
             ),
-
           ),
         ],
       ),
