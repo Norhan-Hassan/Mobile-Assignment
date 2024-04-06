@@ -19,6 +19,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   TextEditingController _idController = TextEditingController();
 
   DatabaseHelper _databaseHelper = DatabaseHelper.instance;
+  List<String> _levels = ['1', '2', '3', '4'];
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>(); // Add form key
 
@@ -61,6 +62,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   controller: _levelController,
                   decoration: InputDecoration(labelText: 'New Level'),
                   validator: _validateLevel, // Add level validation
+
                 ),
                 TextFormField(
                   controller: _idController,
@@ -113,7 +115,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   String? _validateLevel(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Please enter student level';
+      return 'Please enter student ID';
+    }
+    int level;
+    try {
+      level = int.parse(value);
+    } catch (e) {
+      return 'Invalid ID';
+    }
+    if (level < 1 || level > 4) {
+      return 'ID must be between 1 and 4';
     }
     return null;
   }

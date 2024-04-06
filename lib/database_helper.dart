@@ -48,13 +48,6 @@ class DatabaseHelper {
   }
   Future<int> updateRecordByName(String name, Map<String, dynamic> updatedRecord) async {
     try {
-      // Check if a record with the new name already exists
-      bool nameExists = await _checkRecordExists(updatedRecord['name']);
-      if (nameExists) {
-        return -1; // Reject update if the new name already exists
-      }
-
-      // Proceed with updating the record
       Database db = await database;
 
       // Execute the update query
@@ -71,17 +64,7 @@ class DatabaseHelper {
       return -1; // return -1 to indicate error
     }
   }
-
-  Future<bool> _checkRecordExists(String name) async {
-    // Check if a record with the given name already exists in the database
-    Database db = await database;
-    List<Map<String, dynamic>> result = await db.query(
-      'student',
-      where: 'name = ?',
-      whereArgs: [name],
-    );
-    return result.isNotEmpty;
-  }
+  
 
   Future<bool> login(String name, String password) async {
     try {
