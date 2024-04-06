@@ -270,6 +270,12 @@ class _SignupFormState extends State<SignupForm> {
                   if (result) {
                     // Sign up successful
                     // Navigate to the appropriate screen
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Sign up successful !'),
+                        duration: Duration(seconds: 3),
+                      ),
+                    );
                   } else {
                     // Error handling
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -292,54 +298,64 @@ class _SignupFormState extends State<SignupForm> {
   }
 
   Future<bool> _saveUserData() async {
-  // Construct user data
-  Map<String, dynamic> userData = {
-    'name': _nameController.text,
-    'email': _emailController.text,
-    'gender': _selectedGender,
-    'studentId': _studentIdController.text,
-    'level': _selectedLevel,
-    'password': _passwordController.text,
-  };
+    // Construct user data
+    Map<String, dynamic> userData = {
+      'name': _nameController.text,
+      'email': _emailController.text,
+      'gender': _selectedGender,
+      'studentId': _studentIdController.text,
+      'level': _selectedLevel,
+      'password': _passwordController.text,
+    };
 
-  // Save user data to the database
-  try {
-    int userId = await DatabaseHelper.instance.insert(userData);
-    if (userId > 0) {
-      // Sign up successful
-      // Fetch the user data from the database
-      Map<String, dynamic>? userFromDB =
-          await DatabaseHelper.instance.getUserByName(_nameController.text);
-      if (userFromDB != null) {
-        // Navigate to the profile screen with user data
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ProfileScreen(
-              user: User(
-                // Pass the user data retrieved from the database
-                name: userFromDB['name'],
-                email: userFromDB['email'],
-                gender: userFromDB['gender'],
-                studentId: userFromDB['studentId'],
-                level: userFromDB['level'],
-                //password: userFromDB['password']
-                // Add other user data fields here
+    // Check if a user with the same name or email already exists
+    bool userExists = await _checkUserExists(_nameController.text, _emailController.text);
+    if (userExists) {
+      return false; // Reject the data if user already exists
+    }
+
+    // Save user data to the database
+    try {
+      int userId = await DatabaseHelper.instance.insert(userData);
+      if (userId > 0) {
+        // Sign up successful
+        // Fetch the user data from the database
+        Map<String, dynamic>? userFromDB =
+        await DatabaseHelper.instance.getUserByName(_nameController.text);
+        if (userFromDB != null) {
+          // Navigate to the profile screen with user data
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ProfileScreen(
+                user: User(
+                  // Pass the user data retrieved from the database
+                  name: userFromDB['name'],
+                  email: userFromDB['email'],
+                  gender: userFromDB['gender'],
+                  studentId: userFromDB['studentId'],
+                  level: userFromDB['level'],
+                  //password: userFromDB['password']
+                  // Add other user data fields here
+                ),
               ),
             ),
-          ),
-        );
-        return true;
+          );
+          return true;
+        } else {
+          return false; // User data not found
+        }
       } else {
-        return false; // User data not found
+        return false; // Sign up failed
       }
-    } else {
-      return false; // Sign up failed
+    } catch (e) {
+      print("Error saving user data: $e");
+      return false; // Sign up failed due to an error
     }
-  } catch (e) {
-    print("Error saving user data: $e");
-    return false; // Sign up failed due to an error
   }
-}
-
+  Future<bool> _checkUserExists(String name, String email) async {
+    // Check if a user with the same name or email exists in the database
+    Map<String, dynamic>? userData = await DatabaseHelper.instance.getUserByName(name);
+    return userData != null;
+  }
 }

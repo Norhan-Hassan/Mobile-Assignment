@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:assignment1/signup_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -190,6 +191,19 @@ class ProfileBody extends StatelessWidget {
             },
             child: Text(
               'Edit Profile',
+              style: TextStyle(fontSize: 20),
+            ),
+          ),
+          SizedBox(height: 20), // Add spacing before the "Edit Profile" button
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => SignupScreen()), // Navigate to SignupScreen
+              );
+            },
+            child: Text(
+              'Sign Up Again', // Change button text
               style: TextStyle(fontSize: 20),
             ),
           ),
