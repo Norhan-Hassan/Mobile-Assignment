@@ -323,6 +323,7 @@ class _SignupFormState extends State<SignupForm> {
                 gender: userFromDB['gender'],
                 studentId: userFromDB['studentId'],
                 level: userFromDB['level'],
+                //password: userFromDB['password']
                 // Add other user data fields here
               ),
             ),

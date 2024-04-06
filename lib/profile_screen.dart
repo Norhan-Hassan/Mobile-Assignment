@@ -7,6 +7,8 @@ class User {
   final String gender;
   final String studentId;
   final String level;
+  //final String password;
+
 
   const User({
     required this.name,
@@ -14,6 +16,7 @@ class User {
     required this.gender,
     required this.studentId,
     required this.level,
+    //required this.password,
   });
 }
 
@@ -30,15 +33,6 @@ class MyApp extends StatelessWidget {
             textStyle: MaterialStateProperty.all<TextStyle>(TextStyle(fontSize: 20, color: Colors.white)), // Set button text style
             padding: MaterialStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.symmetric(horizontal: 40, vertical: 12)),
           ),
-        ),
-      ),
-      home: ProfileScreen(
-        user: const User(
-          name: "Norhan Hassan",
-          email: "2020@stu-fci.edu.eg",
-          gender: "Female",
-          studentId: "123456",
-          level: "3",
         ),
       ),
     );

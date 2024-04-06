@@ -30,6 +30,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _emailController.text = widget.user.email;
     _levelController.text = widget.user.level;
     _idController.text = widget.user.studentId;
+    //_passwordController.text=widget.user.password;
   }
 
   @override
@@ -38,61 +39,63 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       appBar: AppBar(
         title: Text('Edit Profile'),
       ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey, // Assign form key to the form
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              TextFormField(
-                controller: _nameController,
-                decoration: InputDecoration(labelText: 'Name'),
-                validator: _validateName, // Add name validation
-              ),
-              TextFormField(
-                controller: _emailController,
-                decoration: InputDecoration(labelText: 'New Email'),
-                validator: _validateEmail, // Add email validation
-              ),
-              TextFormField(
-                controller: _levelController,
-                decoration: InputDecoration(labelText: 'New Level'),
-                validator: _validateLevel, // Add level validation
-              ),
-              TextFormField(
-                controller: _idController,
-                decoration: InputDecoration(labelText: 'New ID'),
-                validator: _validateID, // Add ID validation
-              ),
-              TextFormField(
-                obscureText: true,
-                controller: _passwordController,
-                decoration: InputDecoration(labelText: 'New Password'),
-                validator: _validatePassword, // Add password validation
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  // Validate the form before saving changes
-                  if (_formKey.currentState!.validate()) {
-                    // Create a new User object with updated details
-                    User updatedUser = User(
-                      name: _nameController.text,
-                      email: _emailController.text,
-                      gender: widget.user.gender,
-                      studentId: _idController.text,
-                      level: _levelController.text,
-                    );
-                    // Call the onUpdate function to notify ProfileScreen
-                    widget.onUpdate(updatedUser);
-                    // Navigate back to the ProfileScreen
-                    Navigator.pop(context);
-                  }
-                },
-                child: Text('Save Changes'),
-              ),
-            ],
+      body: SingleChildScrollView( // Wrap with SingleChildScrollView
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey, // Assign form key to the form
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                TextFormField(
+                  controller: _nameController,
+                  decoration: InputDecoration(labelText: 'Name'),
+                  validator: _validateName, // Add name validation
+                ),
+                TextFormField(
+                  controller: _emailController,
+                  decoration: InputDecoration(labelText: 'New Email'),
+                  validator: _validateEmail, // Add email validation
+                ),
+                TextFormField(
+                  controller: _levelController,
+                  decoration: InputDecoration(labelText: 'New Level'),
+                  validator: _validateLevel, // Add level validation
+                ),
+                TextFormField(
+                  controller: _idController,
+                  decoration: InputDecoration(labelText: 'New ID'),
+                  validator: _validateID, // Add ID validation
+                ),
+                TextFormField(
+                  obscureText: true,
+                  controller: _passwordController,
+                  decoration: InputDecoration(labelText: 'New Password'),
+                  validator: _validatePassword, // Add password validation
+                ),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    // Validate the form before saving changes
+                    if (_formKey.currentState!.validate()) {
+                      // Create a new User object with updated details
+                      User updatedUser = User(
+                        name: _nameController.text,
+                        email: _emailController.text,
+                        gender: widget.user.gender,
+                        studentId: _idController.text,
+                        level: _levelController.text,
+                      );
+                      // Call the onUpdate function to notify ProfileScreen
+                      widget.onUpdate(updatedUser);
+                      // Navigate back to the ProfileScreen
+                      Navigator.pop(context);
+                    }
+                  },
+                  child: Text('Save Changes'),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -130,10 +133,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   String? _validatePassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Please enter password';
-    }
-    if (value.length < 8) {
+    if (value!.length < 8) {
       return 'Password must be at least 8 characters';
     }
     return null;
