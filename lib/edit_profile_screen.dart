@@ -1,8 +1,7 @@
-import 'package:assignment1/profile_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:assignment1/profile_screen.dart';
 import 'package:assignment1/database_helper.dart';
 
-// EditProfileScreen
 class EditProfileScreen extends StatefulWidget {
   final User user; // Accept the user object as a parameter
   final Function(User) onUpdate;
@@ -20,6 +19,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   TextEditingController _idController = TextEditingController();
 
   DatabaseHelper _databaseHelper = DatabaseHelper.instance;
+
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>(); // Add form key
 
   @override
   void initState() {
@@ -40,50 +41,54 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Form(
+          key: _formKey, // Assign form key to the form
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               TextFormField(
                 controller: _nameController,
                 decoration: InputDecoration(labelText: 'Name'),
-                validator: _validateName,
+                validator: _validateName, // Add name validation
               ),
               TextFormField(
                 controller: _emailController,
                 decoration: InputDecoration(labelText: 'New Email'),
-                validator: _validateEmail,
+                validator: _validateEmail, // Add email validation
               ),
               TextFormField(
                 controller: _levelController,
                 decoration: InputDecoration(labelText: 'New Level'),
-                validator: _validateLevel,
+                validator: _validateLevel, // Add level validation
               ),
               TextFormField(
                 controller: _idController,
                 decoration: InputDecoration(labelText: 'New ID'),
-                validator: _validateID,
+                validator: _validateID, // Add ID validation
               ),
               TextFormField(
                 obscureText: true,
                 controller: _passwordController,
                 decoration: InputDecoration(labelText: 'New Password'),
-                validator: _validatePassword,
+                validator: _validatePassword, // Add password validation
               ),
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
-                  // Create a new User object with updated details
-                  User updatedUser = User(
-                    name: _nameController.text,
-                    email: _emailController.text,
-                    gender: widget.user.gender,
-                    studentId: _idController.text,
-                    level: _levelController.text,
-                  );
-                  // Call the onUpdate function to notify ProfileScreen
-                  widget.onUpdate(updatedUser);
-                  // Navigate back to the ProfileScreen
-                  Navigator.pop(context);
+                  // Validate the form before saving changes
+                  if (_formKey.currentState!.validate()) {
+                    // Create a new User object with updated details
+                    User updatedUser = User(
+                      name: _nameController.text,
+                      email: _emailController.text,
+                      gender: widget.user.gender,
+                      studentId: _idController.text,
+                      level: _levelController.text,
+                    );
+                    // Call the onUpdate function to notify ProfileScreen
+                    widget.onUpdate(updatedUser);
+                    // Navigate back to the ProfileScreen
+                    Navigator.pop(context);
+                  }
                 },
                 child: Text('Save Changes'),
               ),
@@ -93,8 +98,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       ),
     );
   }
-}
 
+  // Validation functions
   String? _validateEmail(String? value) {
     final RegExp regex = RegExp(r'^\d+@stud\.fci-cu\.edu\.eg$');
     if (!regex.hasMatch(value!)) {
@@ -133,4 +138,4 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
     return null;
   }
-
+}
