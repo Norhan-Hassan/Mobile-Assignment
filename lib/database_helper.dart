@@ -46,6 +46,24 @@ class DatabaseHelper {
       return -1;
     }
   }
+  Future<int> updateRecordByName(String name, Map<String, dynamic> updatedRecord) async {
+    try {
+      Database db = await database;
+
+      // Execute the update query
+      int rowsAffected = await db.update(
+        'student', // table name
+        updatedRecord, // updated record data
+        where: 'name = ?', // where clause to find the record to update
+        whereArgs: [name], // arguments for where clause
+      );
+
+      return rowsAffected; // return the number of affected rows
+    } catch (e) {
+      print('Error updating record: $e');
+      return -1; // return -1 to indicate error
+    }
+  }
 
   Future<bool> login(String name, String password) async {
     try {

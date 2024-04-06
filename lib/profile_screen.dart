@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-
 import 'edit_profile_screen.dart';
 
 class User {
   final String name;
   final String email;
-  final String gender; // Add gender field
-  final String studentId; // Add student ID field
-  final String level; // Add level field
+  final String gender;
+  final String studentId;
+  final String level;
 
   const User({
     required this.name,
@@ -24,25 +23,51 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'User Profile',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.indigo, // Change primary color to indigo
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all<Color>(Colors.indigo), // Set button background color
+            textStyle: MaterialStateProperty.all<TextStyle>(TextStyle(fontSize: 20, color: Colors.white)), // Set button text style
+            padding: MaterialStateProperty.all<EdgeInsetsGeometry>(EdgeInsets.symmetric(horizontal: 40, vertical: 12)),
+          ),
+        ),
       ),
       home: ProfileScreen(
         user: const User(
           name: "Norhan Hassan",
           email: "2020@stu-fci.edu.eg",
-          gender: "Female", // Add gender data
-          studentId: "123456", // Add student ID data
-          level: "3", // Add level data
+          gender: "Female",
+          studentId: "123456",
+          level: "3",
         ),
       ),
     );
   }
 }
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   final User user;
 
   ProfileScreen({required this.user});
+
+  @override
+  _ProfileScreenState createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  late User _currentUser;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentUser = widget.user;
+  }
+
+  void updateUser(User newUser) {
+    setState(() {
+      _currentUser = newUser;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,15 +75,16 @@ class ProfileScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text('Your Profile'),
       ),
-      body: ProfileBody(user: user),
+      body: ProfileBody(user: _currentUser, onUpdate: updateUser),
     );
   }
 }
 
 class ProfileBody extends StatelessWidget {
   final User user;
+  final Function(User) onUpdate;
 
-  ProfileBody({required this.user});
+  ProfileBody({required this.user, required this.onUpdate});
 
   @override
   Widget build(BuildContext context) {
@@ -67,47 +93,41 @@ class ProfileBody extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(height: 20),
           Text(
-            user.name,
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            'Name: ${user.name}',
+            style: TextStyle(fontSize: 20, color: Colors.black), // Larger font size, indigo color, bold
           ),
-          SizedBox(height: 10),
+          SizedBox(height: 8),
           Text(
-            user.email,
-            style: TextStyle(fontSize: 18),
+            'Email: ${user.email}',
+            style: TextStyle(fontSize: 18, color: Colors.black), // Smaller font size, indigo color
           ),
-          SizedBox(height: 10),
+          SizedBox(height: 8),
           Text(
-            'Gender: ${user.gender}', // Display gender
-            style: TextStyle(fontSize: 18),
+            'Gender: ${user.gender}',
+            style: TextStyle(fontSize: 18, color: Colors.black),
           ),
-          SizedBox(height: 10),
+          SizedBox(height: 8),
           Text(
-            'Student ID: ${user.studentId}', // Display student ID
-            style: TextStyle(fontSize: 18),
+            'Student ID: ${user.studentId}',
+            style: TextStyle(fontSize: 18, color: Colors.black),
           ),
-          SizedBox(height: 10),
+          SizedBox(height: 8),
           Text(
-            'Level: ${user.level}', // Display level
-            style: TextStyle(fontSize: 18),
+            'Level: ${user.level}',
+            style: TextStyle(fontSize: 18, color: Colors.black),
           ),
           SizedBox(height: 20),
           ElevatedButton(
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => EditProfileScreen()),
+                MaterialPageRoute(builder: (context) => EditProfileScreen(user: user, onUpdate: onUpdate)),
               );
             },
             child: Text(
               'Edit Profile',
-              style: TextStyle(color: Colors.white),
-            ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.teal,
-              textStyle: TextStyle(fontSize: 20),
-              padding: EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+              style: TextStyle(fontSize: 20), // Larger font size for button text
             ),
           ),
         ],
