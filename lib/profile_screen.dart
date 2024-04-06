@@ -1,9 +1,11 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:assignment1/signup_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+import 'database_helper.dart';
 import 'edit_profile_screen.dart';
 
 class User {
@@ -12,6 +14,7 @@ class User {
   final String gender;
   final String studentId;
   final String level;
+  final String password;
 
   const User({
     required this.name,
@@ -19,7 +22,19 @@ class User {
     required this.gender,
     required this.studentId,
     required this.level,
+    required this.password,
   });
+  // Define a method to convert User object to a map
+  Map<String, dynamic> toMap() {
+    return {
+      'name': name,
+      'email': email,
+      'gender': gender,
+      'studentId': studentId,
+      'level': level,
+      'password': password,
+    };
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -44,6 +59,8 @@ class MyApp extends StatelessWidget {
           gender: "Male",
           studentId: "123456",
           level: "3",
+          password: "12345678",
+          //profilePhoto: null,
         ),
       ),
     );
@@ -62,11 +79,22 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   late User _currentUser;
   File? _image;
+  final DatabaseHelper _databaseHelper = DatabaseHelper.instance;
 
   @override
   void initState() {
     super.initState();
     _currentUser = widget.user;
+    _loadProfilePhoto();
+  }
+
+  Future<void> _loadProfilePhoto() async {
+    Uint8List? photo = await _databaseHelper.getProfilePhoto(_currentUser.name);
+    if (photo != null) {
+      setState(() {
+        _image = File.fromRawPath(photo);
+      });
+    }
   }
 
   Future<void> _getImage(ImageSource source) async {
@@ -76,12 +104,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
     setState(() {
       if (pickedImage != null) {
         _image = File(pickedImage.path);
+        _saveProfilePhoto();
       } else {
         print('No image selected.');
       }
     });
   }
-
+  Future<void> _saveProfilePhoto() async {
+    if (_image != null) {
+      Uint8List bytes = await _image!.readAsBytes();
+      await _databaseHelper.saveProfilePhoto(_currentUser.name, bytes);
+    }
+  }
   void updateUser(User newUser) {
     setState(() {
       _currentUser = newUser;

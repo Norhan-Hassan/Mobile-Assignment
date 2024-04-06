@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -28,7 +30,8 @@ class DatabaseHelper {
             gender TEXT,
             studentId TEXT,
             level TEXT,
-            password TEXT
+            password TEXT,
+            photo BLOB
           )
           '''
         );
@@ -64,7 +67,41 @@ class DatabaseHelper {
       return -1; // return -1 to indicate error
     }
   }
-  
+  Future<int> saveProfilePhoto(String name, Uint8List photo) async {
+    try {
+      Database db = await database;
+      return await db.update(
+        'users',
+        {'photo': photo},
+        where: 'name = ?',
+        whereArgs: [name],
+      );
+    } catch (e) {
+      print('Error saving profile photo: $e');
+      return -1;
+    }
+  }
+
+  Future<Uint8List?> getProfilePhoto(String name) async {
+    try {
+      Database db = await database;
+      List<Map<String, dynamic>> result = await db.query(
+        'users',
+        columns: ['photo'],
+        where: 'name = ?',
+        whereArgs: [name],
+      );
+      if (result.isNotEmpty) {
+        return result.first['photo'];
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print('Error fetching profile photo: $e');
+      return null;
+    }
+  }
+
 
   Future<bool> login(String name, String password) async {
     try {
@@ -99,4 +136,23 @@ class DatabaseHelper {
     return null; // Return null in case of any error
   }
 }
+  Future<Map<String, dynamic>?> getUserByMail(String email) async {
+    try {
+      Database db = await database;
+      List<Map<String, dynamic>> result = await db.query(
+        'users',
+        where: 'name = ?',
+        whereArgs: [email],
+      );
+      if (result.isNotEmpty) {
+        // User found, return user data
+        return result.first;
+      } else {
+        return null; // User not found
+      }
+    } catch (e) {
+      print('Error fetching user by email: $e');
+      return null; // Return null in case of any error
+    }
+  }
 }

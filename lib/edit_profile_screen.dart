@@ -1,3 +1,6 @@
+import 'dart:io'; // Import 'dart:io' for File class
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:assignment1/profile_screen.dart';
 import 'package:assignment1/database_helper.dart';
@@ -17,21 +20,29 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   TextEditingController _passwordController = TextEditingController();
   TextEditingController _levelController = TextEditingController();
   TextEditingController _idController = TextEditingController();
+  File? _image;
+  final DatabaseHelper _databaseHelper = DatabaseHelper.instance;
 
-  DatabaseHelper _databaseHelper = DatabaseHelper.instance;
-  List<String> _levels = ['1', '2', '3', '4'];
-
-  GlobalKey<FormState> _formKey = GlobalKey<FormState>(); // Add form key
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
-    // Initialize controllers with user data
     _nameController.text = widget.user.name;
     _emailController.text = widget.user.email;
     _levelController.text = widget.user.level;
     _idController.text = widget.user.studentId;
-    //_passwordController.text=widget.user.password;
+    _passwordController.text = widget.user.password;
+    _loadProfilePhoto();
+  }
+
+  Future<void> _loadProfilePhoto() async {
+    Uint8List? photo = await _databaseHelper.getProfilePhoto(widget.user.name);
+    if (photo != null) {
+      setState(() {
+        _image = File.fromRawPath(photo);
+      });
+    }
   }
 
   @override
@@ -40,57 +51,63 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       appBar: AppBar(
         title: Text('Edit Profile'),
       ),
-      body: SingleChildScrollView( // Wrap with SingleChildScrollView
+      body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(16.0),
           child: Form(
-            key: _formKey, // Assign form key to the form
+            key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                if (_image != null)
+                  CircleAvatar(
+                    radius: 50,
+                    backgroundImage: FileImage(_image!),
+                  ),
                 TextFormField(
                   controller: _nameController,
                   decoration: InputDecoration(labelText: 'Name'),
-                  validator: _validateName, // Add name validation
+                  validator: _validateName,
                 ),
                 TextFormField(
                   controller: _emailController,
                   decoration: InputDecoration(labelText: 'New Email'),
-                  validator: _validateEmail, // Add email validation
+                  validator: _validateEmail,
                 ),
                 TextFormField(
                   controller: _levelController,
                   decoration: InputDecoration(labelText: 'New Level'),
-                  validator: _validateLevel, // Add level validation
-
+                  validator: _validateLevel,
                 ),
                 TextFormField(
                   controller: _idController,
                   decoration: InputDecoration(labelText: 'New ID'),
-                  validator: _validateID, // Add ID validation
+                  validator: _validateID,
                 ),
                 TextFormField(
                   obscureText: true,
                   controller: _passwordController,
                   decoration: InputDecoration(labelText: 'New Password'),
-                  validator: _validatePassword, // Add password validation
+                  validator: _validatePassword,
                 ),
                 SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: () {
-                    // Validate the form before saving changes
+                  onPressed: () async {
                     if (_formKey.currentState!.validate()) {
-                      // Create a new User object with updated details
                       User updatedUser = User(
                         name: _nameController.text,
                         email: _emailController.text,
                         gender: widget.user.gender,
                         studentId: _idController.text,
                         level: _levelController.text,
+                        password: _passwordController.text,
                       );
-                      // Call the onUpdate function to notify ProfileScreen
+                      await _databaseHelper.updateRecordByName(widget.user.name, updatedUser.toMap());
+                      if (_image != null) {
+                        Uint8List bytes = await _image!.readAsBytesSync(); // Use readAsBytesSync() from dart:io
+                        await _databaseHelper.saveProfilePhoto(updatedUser.name, bytes);
+                      }
                       widget.onUpdate(updatedUser);
-                      // Navigate back to the ProfileScreen
                       Navigator.pop(context);
                     }
                   },
@@ -104,7 +121,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  // Validation functions
   String? _validateEmail(String? value) {
     final RegExp regex = RegExp(r'^\d+@stud\.fci-cu\.edu\.eg$');
     if (!regex.hasMatch(value!)) {
@@ -115,16 +131,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   String? _validateLevel(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Please enter student ID';
+      return 'Please enter level';
     }
     int level;
     try {
       level = int.parse(value);
     } catch (e) {
-      return 'Invalid ID';
+      return 'Invalid level';
     }
     if (level < 1 || level > 4) {
-      return 'ID must be between 1 and 4';
+      return 'Level must be between 1 and 4';
     }
     return null;
   }

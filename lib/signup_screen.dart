@@ -308,8 +308,8 @@ class _SignupFormState extends State<SignupForm> {
       'password': _passwordController.text,
     };
 
-    // Check if a user with the same name or email already exists
-    bool userExists = await _checkUserExists(_nameController.text, _emailController.text);
+    // Check if a user with the same email already exists
+    bool userExists = await _checkUserExists(_emailController.text);
     if (userExists) {
       return false; // Reject the data if user already exists
     }
@@ -335,7 +335,7 @@ class _SignupFormState extends State<SignupForm> {
                   gender: userFromDB['gender'],
                   studentId: userFromDB['studentId'],
                   level: userFromDB['level'],
-                  //password: userFromDB['password']
+                  password: userFromDB['password']
                   // Add other user data fields here
                 ),
               ),
@@ -353,9 +353,9 @@ class _SignupFormState extends State<SignupForm> {
       return false; // Sign up failed due to an error
     }
   }
-  Future<bool> _checkUserExists(String name, String email) async {
-    // Check if a user with the same name or email exists in the database
-    Map<String, dynamic>? userData = await DatabaseHelper.instance.getUserByName(name);
+  Future<bool> _checkUserExists( String email) async {
+    // Check if a user with the same  email exists in the database
+    Map<String, dynamic>? userData = await DatabaseHelper.instance.getUserByName(email);
     return userData != null;
   }
 }
