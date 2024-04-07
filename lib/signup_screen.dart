@@ -185,17 +185,6 @@ class _SignupFormState extends State<SignupForm> {
           ),
           SizedBox(height: 10),
           TextFormField(
-            controller: _emailController,
-            decoration: InputDecoration(
-              labelText: 'Email',
-              hintText: 'Enter your email',
-              prefixIcon: Icon(Icons.email),
-              border: OutlineInputBorder(),
-            ),
-            validator: _validateEmail,
-          ),
-          SizedBox(height: 10),
-          TextFormField(
             controller: _studentIdController,
             decoration: InputDecoration(
               labelText: 'Student ID',
@@ -204,6 +193,17 @@ class _SignupFormState extends State<SignupForm> {
               border: OutlineInputBorder(),
             ),
             validator: _validateID,
+          ),
+          SizedBox(height: 10),
+          TextFormField(
+            controller: _emailController,
+            decoration: InputDecoration(
+              labelText: 'Email',
+              hintText: 'Enter your email',
+              prefixIcon: Icon(Icons.email),
+              border: OutlineInputBorder(),
+            ),
+            validator: _validateEmail,
           ),
           SizedBox(height: 10),
           DropdownButtonFormField<String>(
@@ -308,8 +308,8 @@ class _SignupFormState extends State<SignupForm> {
       'password': _passwordController.text,
     };
 
-    // Check if a user with the same email already exists
-    bool userExists = await _checkUserExists(_emailController.text);
+    // Check if a user with the same name already exists
+    bool userExists = await _checkUserExists(_nameController.text);
     if (userExists) {
       return false; // Reject the data if user already exists
     }
@@ -353,9 +353,9 @@ class _SignupFormState extends State<SignupForm> {
       return false; // Sign up failed due to an error
     }
   }
-  Future<bool> _checkUserExists( String email) async {
+  Future<bool> _checkUserExists( String name) async {
     // Check if a user with the same  email exists in the database
-    Map<String, dynamic>? userData = await DatabaseHelper.instance.getUserByName(email);
+    Map<String, dynamic>? userData = await DatabaseHelper.instance.getUserByName(name);
     return userData != null;
   }
 }

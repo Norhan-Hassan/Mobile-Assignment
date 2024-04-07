@@ -19,7 +19,7 @@ class DatabaseHelper {
   Future<Database> _initDatabase() async {
     String path = await getDatabasesPath();
     return await openDatabase(
-      join(path, 'your_database_name.db'),
+      join(path, 'StudentDB.db'),
       onCreate: (db, version) async {
         await db.execute(
           '''
@@ -31,12 +31,12 @@ class DatabaseHelper {
             studentId TEXT,
             level TEXT,
             password TEXT,
-            photo BLOB
+            imagePath TEXT
           )
           '''
         );
       },
-      version: 1,
+      version: 2,
     );
   }
 
@@ -55,7 +55,7 @@ class DatabaseHelper {
 
       // Execute the update query
       int rowsAffected = await db.update(
-        'student', // table name
+        'users', // Correct table name
         updatedRecord, // updated record data
         where: 'name = ?', // where clause to find the record to update
         whereArgs: [name], // arguments for where clause
@@ -67,18 +67,37 @@ class DatabaseHelper {
       return -1; // return -1 to indicate error
     }
   }
-  Future<int> saveProfilePhoto(String name, Uint8List photo) async {
+  Future<int> saveProfilePhotoPath(String name, String photoPath) async {
     try {
       Database db = await database;
       return await db.update(
         'users',
-        {'photo': photo},
+        {'imagePath': photoPath},
         where: 'name = ?',
         whereArgs: [name],
       );
     } catch (e) {
-      print('Error saving profile photo: $e');
+      print('Error saving profile photo path: $e');
       return -1;
+    }
+  }
+  Future<String?> getProfilePhotoPath(String name) async {
+    try {
+      Database db = await database;
+      List<Map<String, dynamic>> result = await db.query(
+        'users',
+        columns: ['imagePath'],
+        where: 'name = ?',
+        whereArgs: [name],
+      );
+      if (result.isNotEmpty) {
+        return result.first['imagePath'];
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print('Error fetching profile photo path: $e');
+      return null;
     }
   }
 
@@ -87,12 +106,12 @@ class DatabaseHelper {
       Database db = await database;
       List<Map<String, dynamic>> result = await db.query(
         'users',
-        columns: ['photo'],
+        columns: ['imagePath'],
         where: 'name = ?',
         whereArgs: [name],
       );
       if (result.isNotEmpty) {
-        return result.first['photo'];
+        return result.first['imagePath'];
       } else {
         return null;
       }
@@ -141,7 +160,7 @@ class DatabaseHelper {
       Database db = await database;
       List<Map<String, dynamic>> result = await db.query(
         'users',
-        where: 'name = ?',
+        where: 'email = ?',
         whereArgs: [email],
       );
       if (result.isNotEmpty) {

@@ -1,9 +1,9 @@
 import 'dart:io'; // Import 'dart:io' for File class
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:assignment1/profile_screen.dart';
 import 'package:assignment1/database_helper.dart';
+import 'package:flutter/services.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final User user; // Accept the user object as a parameter
@@ -35,12 +35,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _passwordController.text = widget.user.password;
     _loadProfilePhoto();
   }
-
   Future<void> _loadProfilePhoto() async {
-    Uint8List? photo = await _databaseHelper.getProfilePhoto(widget.user.name);
-    if (photo != null) {
+    String? photoPath = await _databaseHelper.getProfilePhotoPath(widget.user.name);
+    if (photoPath != null) {
       setState(() {
-        _image = File.fromRawPath(photo);
+        _image = File(photoPath);
+      });
+    }
+    else
+    {
+      setState(() {
+        _image = File('assets/default.png');
       });
     }
   }
@@ -61,7 +66,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               children: [
                 if (_image != null)
                   CircleAvatar(
-                    radius: 50,
+                    radius: 70,
                     backgroundImage: FileImage(_image!),
                   ),
                 TextFormField(
@@ -104,8 +109,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       );
                       await _databaseHelper.updateRecordByName(widget.user.name, updatedUser.toMap());
                       if (_image != null) {
-                        Uint8List bytes = await _image!.readAsBytesSync(); // Use readAsBytesSync() from dart:io
-                        await _databaseHelper.saveProfilePhoto(updatedUser.name, bytes);
+                        await _databaseHelper.saveProfilePhotoPath(updatedUser.name, _image!.path);
                       }
                       widget.onUpdate(updatedUser);
                       Navigator.pop(context);

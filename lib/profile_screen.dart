@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:assignment1/signup_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'database_helper.dart';
@@ -15,6 +16,8 @@ class User {
   final String studentId;
   final String level;
   final String password;
+  final String? imagePath;
+
 
   const User({
     required this.name,
@@ -23,6 +26,7 @@ class User {
     required this.studentId,
     required this.level,
     required this.password,
+    this.imagePath,
   });
   // Define a method to convert User object to a map
   Map<String, dynamic> toMap() {
@@ -89,10 +93,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _loadProfilePhoto() async {
-    Uint8List? photo = await _databaseHelper.getProfilePhoto(_currentUser.name);
-    if (photo != null) {
+    String? photoPath = await _databaseHelper.getProfilePhotoPath(_currentUser.name);
+    if (photoPath != null) {
       setState(() {
-        _image = File.fromRawPath(photo);
+        _image = File(photoPath);
+      });
+    }
+    else
+    {
+      setState(() {
+        _image = File('assets/default.png');
       });
     }
   }
@@ -112,10 +122,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
   Future<void> _saveProfilePhoto() async {
     if (_image != null) {
-      Uint8List bytes = await _image!.readAsBytes();
-      await _databaseHelper.saveProfilePhoto(_currentUser.name, bytes);
+      String imagePath = _image!.path;
+      await _databaseHelper.saveProfilePhotoPath(_currentUser.name, imagePath);
     }
   }
+
   void updateUser(User newUser) {
     setState(() {
       _currentUser = newUser;
@@ -150,7 +161,7 @@ class ProfileBody extends StatelessWidget {
         children: [
           if (image != null)
             CircleAvatar(
-              radius: 50,
+              radius: 70,
               backgroundImage: FileImage(image!),
             ),
           Text(
