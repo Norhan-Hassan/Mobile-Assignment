@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\EnterpriseMobileApp_ASS1.props" />
+</Project>

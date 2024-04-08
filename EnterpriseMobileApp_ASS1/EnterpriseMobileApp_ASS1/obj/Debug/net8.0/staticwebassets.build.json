@@ -1,0 +1,39 @@
+{
+  "Version": 1,
+  "Hash": "UfmiziJyPv0vRtVjUvPPe84b7UPd3UFJAXKnq30979Q=",
+  "Source": "EnterpriseMobileApp_ASS1",
+  "BasePath": "_content/EnterpriseMobileApp_ASS1",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "EnterpriseMobileApp_ASS1\\wwwroot",
+      "Source": "EnterpriseMobileApp_ASS1",
+      "ContentRoot": "E:\\subjects\\4th Level\\Mobile\\Assignment1\\EnterpriseMobileApp_ASS1\\EnterpriseMobileApp_ASS1\\wwwroot\\",
+      "BasePath": "_content/EnterpriseMobileApp_ASS1",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "E:\\subjects\\4th Level\\Mobile\\Assignment1\\EnterpriseMobileApp_ASS1\\EnterpriseMobileApp_ASS1\\wwwroot\\Default\\default.jpg",
+      "SourceId": "EnterpriseMobileApp_ASS1",
+      "SourceType": "Discovered",
+      "ContentRoot": "E:\\subjects\\4th Level\\Mobile\\Assignment1\\EnterpriseMobileApp_ASS1\\EnterpriseMobileApp_ASS1\\wwwroot\\",
+      "BasePath": "_content/EnterpriseMobileApp_ASS1",
+      "RelativePath": "Default/default.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\Default\\default.jpg"
+    }
+  ]
+}
