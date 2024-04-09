@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'database_helper.dart';
 import 'profile_screen.dart';
 import 'signup_screen.dart';
+import 'Components/buildTextFormField.dart';
+import 'Components/buildSigninButton.dart';
 
 class LoginForm extends StatefulWidget {
   @override
@@ -18,7 +20,7 @@ class _LoginFormState extends State<LoginForm> {
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(20.0),
+          padding: EdgeInsets.only(top: 100, left: 20, right: 20, bottom: 20),
           child: Form(
             key: _formKey,
             child: Column(
@@ -26,7 +28,7 @@ class _LoginFormState extends State<LoginForm> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  'Login',
+                  'Welcome Back',
                   style: TextStyle(
                     fontSize: 35,
                     color: Colors.teal,
@@ -34,15 +36,12 @@ class _LoginFormState extends State<LoginForm> {
                   ),
                   textAlign: TextAlign.center,
                 ),
-                SizedBox(height: 20),
-                TextFormField(
+                SizedBox(height: 40),
+                buildTextFormField(
                   controller: _nameController,
-                  decoration: InputDecoration(
-                    labelText: 'Name',
-                    hintText: 'Enter your name',
-                    prefixIcon: Icon(Icons.person),
-                    border: OutlineInputBorder(),
-                  ),
+                  labelText: 'Name',
+                  hintText: 'Enter your name',
+                  prefixIcon: Icons.person,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter name';
@@ -51,15 +50,12 @@ class _LoginFormState extends State<LoginForm> {
                   },
                 ),
                 SizedBox(height: 20),
-                TextFormField(
+                buildTextFormField(
                   controller: _passwordController,
                   obscureText: true,
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    hintText: 'Enter your password',
-                    prefixIcon: Icon(Icons.password),
-                    border: OutlineInputBorder(),
-                  ),
+                  labelText: 'Password',
+                  hintText: 'Enter your password',
+                  prefixIcon: Icons.password,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter password';
@@ -68,66 +64,86 @@ class _LoginFormState extends State<LoginForm> {
                   },
                 ),
                 SizedBox(height: 30),
-                ElevatedButton(
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      bool loggedIn = await DatabaseHelper.instance.login(
-                        _nameController.text,
-                        _passwordController.text,
-                      );
-                      if (loggedIn) {
-                        Map<String, dynamic>? userData = await DatabaseHelper.instance.getUserByName(_nameController.text);
-                        if (userData != null) {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ProfileScreen(
-                                user: User(
+                buildSigninButton(() async {
+                  if (_formKey.currentState!.validate()) {
+                    bool loggedIn = await DatabaseHelper.instance.login(
+                      _nameController.text,
+                      _passwordController.text,
+                    );
+                    if (loggedIn) {
+                      Map<String, dynamic>? userData =
+                          await DatabaseHelper.instance
+                              .getUserByName(_nameController.text);
+                      if (userData != null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Login successful!'),
+                            duration: Duration(seconds: 3),
+                            backgroundColor: Colors.green, // Set color to green
+                          ),
+                        );
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProfileScreen(
+                              user: User(
                                   name: userData['name'],
                                   email: userData['email'],
                                   gender: userData['gender'],
                                   studentId: userData['studentId'],
                                   level: userData['level'],
-                                  password: userData['password']
-                                ),
-                              ),
+                                  password: userData['password']),
                             ),
-                          );
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('User data not found.'),
-                            ),
-                          );
-                        }
+                          ),
+                        );
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('Login failed. Please check your credentials.'),
+                            content: Text('User data not found.'),
+                            backgroundColor: Colors.red, // Set color to red
                           ),
                         );
                       }
-                    }
-                  },
-                  child: Text('Login'),
-                ),
-                SizedBox(height: 10),
-                Center(
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => SignupScreen()),
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                              'Login failed. Please check your credentials.'),
+                          backgroundColor: Colors.red, // Set color to red
+                          duration: Duration(seconds: 5),
+                        ),
                       );
-                    },
-                    child: Text(
-                      'Don\'t have an account? Sign up',
+                    }
+                  }
+                }),
+                SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Don\'t have an account? ',
                       style: TextStyle(
-                        color: Colors.blue,
-                        decoration: TextDecoration.underline,
+                        color: Colors.black87,
+                        fontSize: 18,
                       ),
                     ),
-                  ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => SignupScreen()),
+                        );
+                      },
+                      child: Text(
+                        'Sign up',
+                        style: TextStyle(
+                          color: Colors.teal, // Change the color to teal
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

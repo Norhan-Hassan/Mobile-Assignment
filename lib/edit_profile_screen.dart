@@ -1,5 +1,4 @@
-import 'dart:io'; // Import 'dart:io' for File class
-
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:assignment1/profile_screen.dart';
 import 'package:assignment1/database_helper.dart';
@@ -35,15 +34,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _passwordController.text = widget.user.password;
     _loadProfilePhoto();
   }
+
   Future<void> _loadProfilePhoto() async {
     String? photoPath = await _databaseHelper.getProfilePhotoPath(widget.user.name);
     if (photoPath != null) {
       setState(() {
         _image = File(photoPath);
       });
-    }
-    else
-    {
+    } else {
       setState(() {
         _image = File('assets/default.png');
       });
@@ -115,7 +113,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       Navigator.pop(context);
                     }
                   },
-                  child: Text('Save Changes'),
+                  child: Text('Save Changes',
+                    style: TextStyle(color: Colors.white),),
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(Colors.teal),
+                    textStyle: MaterialStateProperty.all<TextStyle>(TextStyle(color: Colors.white)),
+                  ),
                 ),
               ],
             ),
