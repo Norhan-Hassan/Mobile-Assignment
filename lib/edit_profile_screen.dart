@@ -43,7 +43,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       });
     } else {
       setState(() {
-        _image = File('assets/default.jpg');
+        _image = File('assets/default.png');
       });
     }
   }
