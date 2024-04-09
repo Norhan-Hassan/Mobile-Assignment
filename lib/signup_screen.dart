@@ -96,8 +96,16 @@ class _SignupFormState extends State<SignupForm> {
 
   String? _validateEmail(String? value) {
     final RegExp regex = RegExp(r'^\d+@stud\.fci-cu\.edu\.eg$');
-    if (!regex.hasMatch(value!)) {
-      return 'Enter a valid student email address';
+    if (!regex.hasMatch(value!) || !value.endsWith('@stud.fci-cu.edu.eg')) {
+      return 'Email should be in the format: studentID@stud.fci-cu.edu.eg';
+    }
+    // Split the email address to get the part before @
+    final emailParts = value.split('@');
+    final studentIdFromEmail = emailParts[0];
+
+    // Check if the part before @ matches the entered student ID
+    if (studentIdFromEmail != _studentIdController.text) {
+      return 'please, write id part correctly';
     }
     return null;
   }

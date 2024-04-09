@@ -43,11 +43,11 @@ class MyApp extends StatelessWidget {
       title: 'User Profile',
       theme: ThemeData(
         primarySwatch: Colors.indigo,
-      ),
+      ), debugShowCheckedModeBanner: false,
       home: ProfileScreen(
         user: const User(
           name: "John Doe",
-          email: "john.doe@example.com",
+          email: "123456@stud.fci-cu.edu.eg",
           gender: "Male",
           studentId: "123456",
           level: "3",
@@ -88,7 +88,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       });
     } else {
       setState(() {
-        _image = File('assets/default.png');
+        _image = File('assets/default.jpg');
       });
     }
   }
@@ -209,13 +209,24 @@ class ProfileBody extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: 20),
-          _buildProfileInfo('Name', user.name),
-          _buildProfileInfo('Email', user.email),
-          _buildProfileInfo('Gender', user.gender),
-          _buildProfileInfo('Student ID', user.studentId),
-          _buildProfileInfo('Level', user.level),
-          SizedBox(height: 20),
+
+          Column(
+            children: [
+              SizedBox(height: 20),
+              _buildProfileInfo('Name', user.name),
+              SizedBox(height: 20),
+              _buildProfileInfo('Email', user.email),
+              SizedBox(height: 20),
+              _buildProfileInfo('Gender', user.gender),
+              SizedBox(height: 20),
+              _buildProfileInfo('Student ID', user.studentId),
+              SizedBox(height: 20),
+              _buildProfileInfo('Level', user.level),
+              SizedBox(height: 20),
+            ],
+          ),
+
+          /*
           MyCustomButton(
             onPressed: () {
               Navigator.push(
@@ -228,11 +239,83 @@ class ProfileBody extends StatelessWidget {
             },
             text: 'Edit Profile',
           ),
+          //
+
+           */
+          Center(
+            child: SizedBox(
+              width: double.infinity, // Make button take the full width of the screen
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          EditProfileScreen(user: user, onUpdate: onUpdate),
+                    ),
+                  );
+                },
+                child: Text(
+                  'Edit Profile',
+                  style: TextStyle(color: Colors.white), // Set font color to white
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.teal, // Set background color to teal
+                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  textStyle: TextStyle(fontSize: 16),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 20),
+          // Link to return to sign up screen
+          Center(
+            child: GestureDetector(
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SignupScreen(), // Navigate to signup screen
+                  ),
+                );
+              },
+              child: Text(
+                'Return to Sign Up',
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
+
+  Widget _buildProfileInfo(String label, String value) {
+    return Row(
+      children: [
+        Text(
+          label + ': ',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 18,
+          ),
+        ),
+      ],
+    );
+  }
+
+
+/*
   Widget _buildProfileInfo(String label, String value) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -255,8 +338,12 @@ class ProfileBody extends StatelessWidget {
       ],
     );
   }
-}
+  */
+  //
 
+
+}
+/*
 class MyCustomButton extends StatelessWidget {
   final VoidCallback onPressed;
   final String text;
@@ -277,3 +364,4 @@ class MyCustomButton extends StatelessWidget {
     );
   }
 }
+*/

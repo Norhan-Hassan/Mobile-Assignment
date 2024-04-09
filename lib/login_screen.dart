@@ -110,7 +110,7 @@ class _LoginFormState extends State<LoginForm> {
                           content: Text(
                               'Login failed. Please check your credentials.'),
                           backgroundColor: Colors.red, // Set color to red
-                          duration: Duration(seconds: 5),
+                          duration: Duration(seconds: 3),
                         ),
                       );
                     }
