@@ -1,5 +1,4 @@
-import 'dart:io'; // Import 'dart:io' for File class
-
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:assignment1/profile_screen.dart';
 import 'package:assignment1/database_helper.dart';
@@ -35,15 +34,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _passwordController.text = widget.user.password;
     _loadProfilePhoto();
   }
+
   Future<void> _loadProfilePhoto() async {
     String? photoPath = await _databaseHelper.getProfilePhotoPath(widget.user.name);
     if (photoPath != null) {
       setState(() {
         _image = File(photoPath);
       });
-    }
-    else
-    {
+    } else {
       setState(() {
         _image = File('assets/default.png');
       });
@@ -66,13 +64,18 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               children: [
                 if (_image != null)
                   CircleAvatar(
-                    radius: 70,
+                    radius: 80,
                     backgroundImage: FileImage(_image!),
                   ),
                 TextFormField(
                   controller: _nameController,
-                  decoration: InputDecoration(labelText: 'Name'),
+                  decoration: InputDecoration(labelText: 'New Name'),
                   validator: _validateName,
+                ),
+                TextFormField(
+                  controller: _idController,
+                  decoration: InputDecoration(labelText: 'New ID'),
+                  validator: _validateID,
                 ),
                 TextFormField(
                   controller: _emailController,
@@ -83,11 +86,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   controller: _levelController,
                   decoration: InputDecoration(labelText: 'New Level'),
                   validator: _validateLevel,
-                ),
-                TextFormField(
-                  controller: _idController,
-                  decoration: InputDecoration(labelText: 'New ID'),
-                  validator: _validateID,
                 ),
                 TextFormField(
                   obscureText: true,
@@ -115,7 +113,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       Navigator.pop(context);
                     }
                   },
-                  child: Text('Save Changes'),
+                  child: Text('Save Changes',
+                    style: TextStyle(color: Colors.white),),
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(Colors.teal),
+                    textStyle: MaterialStateProperty.all<TextStyle>(TextStyle(color: Colors.white)),
+                  ),
                 ),
               ],
             ),
@@ -127,8 +130,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   String? _validateEmail(String? value) {
     final RegExp regex = RegExp(r'^\d+@stud\.fci-cu\.edu\.eg$');
-    if (!regex.hasMatch(value!)) {
-      return 'Enter a valid student email address';
+    if (!regex.hasMatch(value!) || !value.endsWith('@stud.fci-cu.edu.eg')) {
+      return 'Email should be in the format: studentID@stud.fci-cu.edu.eg';
+    }
+    // Split the email address to get the part before @
+    final emailParts = value.split('@');
+    final studentIdFromEmail = emailParts[0];
+
+    // Check if the part before @ matches the entered student ID
+    if (studentIdFromEmail != _idController.text) {
+      return 'please, write id part correctly';
     }
     return null;
   }
