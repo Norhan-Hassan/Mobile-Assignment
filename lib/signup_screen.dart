@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'signup_screen.dart';
+import 'ApiHandler.dart';
 import 'login_screen.dart';
 import 'profile_screen.dart';
 import 'Components/buildTextFormField.dart';
@@ -59,7 +59,7 @@ class SignupBody extends StatelessWidget {
                       child: Text(
                         'Login',
                         style: TextStyle(
-                          color: Colors.teal, 
+                          color: Colors.teal,
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
                         ),
@@ -67,7 +67,7 @@ class SignupBody extends StatelessWidget {
                     ),
                   ],
                 ),
-          
+
           SizedBox(height: 50),
         ],
       ),
@@ -239,12 +239,22 @@ class _SignupFormState extends State<SignupForm> {
 
   void _signup() async {
     if (_formKey.currentState!.validate()) {
+      ApiHandler().sendPostRequest(
+        name: _nameController.text,
+        email: _emailController.text,
+        studentId: _studentIdController.text,
+        password: _passwordController.text,
+        gender: _selectedGender,
+        level: _selectedLevel,
+        confirmPassword: _confirmPasswordController.text
+      );
       bool result = await _saveUserData();
       if (result) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Sign up successful!'),
             duration: Duration(seconds: 3),
+            backgroundColor: Colors.green,
           ),
         );
       } else {
@@ -252,6 +262,7 @@ class _SignupFormState extends State<SignupForm> {
           SnackBar(
             content: Text('Sign up failed. Please try again.'),
             duration: Duration(seconds: 3),
+            backgroundColor: Colors.red,
           ),
         );
       }

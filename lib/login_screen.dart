@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'ApiHandler.dart';
 import 'database_helper.dart';
 import 'profile_screen.dart';
 import 'signup_screen.dart';
@@ -66,6 +67,10 @@ class _LoginFormState extends State<LoginForm> {
                 SizedBox(height: 30),
                 buildSigninButton(() async {
                   if (_formKey.currentState!.validate()) {
+                      ApiHandler().sendLoginRequest(
+                        name: _nameController.text,
+                        password: _passwordController.text,
+                      );
                     bool loggedIn = await DatabaseHelper.instance.login(
                       _nameController.text,
                       _passwordController.text,

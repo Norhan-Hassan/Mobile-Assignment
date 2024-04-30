@@ -4,6 +4,8 @@ import 'package:assignment1/profile_screen.dart';
 import 'package:assignment1/database_helper.dart';
 import 'package:flutter/services.dart';
 
+import 'ApiHandler.dart';
+
 class EditProfileScreen extends StatefulWidget {
   final User user; // Accept the user object as a parameter
   final Function(User) onUpdate;

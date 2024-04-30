@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'ApiHandler.dart';
 import 'database_helper.dart';
 import 'edit_profile_screen.dart';
 import 'signup_screen.dart';
@@ -71,13 +72,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late User _currentUser;
   File? _image;
   final DatabaseHelper _databaseHelper = DatabaseHelper.instance;
+  final ApiHandler _apiHandler = ApiHandler();
+
 
   @override
   void initState() {
     super.initState();
     _currentUser = widget.user;
     _loadProfilePhoto();
+    _fetchUserData(_currentUser.name);
   }
+
+  // Fetch user data from the API
+  Future<void> _fetchUserData(String name) async {
+    try {
+      Map<String, dynamic> userInfo = await _apiHandler.getUserInfo(name);
+      userInfo.forEach((key, value) {
+        print('$key: $value');
+      });
+      print("User data fetched successfuly");
+    } catch (e) {
+      print('Error fetching user data: $e');
+    }
+  }
+
 
   Future<void> _loadProfilePhoto() async {
     String? photoPath =

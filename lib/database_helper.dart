@@ -7,7 +7,6 @@ class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._privateConstructor();
   DatabaseHelper._privateConstructor();
   static DatabaseHelper get instance => _instance;
-
   static Database? _database;
 
   Future<Database> get database async {
@@ -42,6 +41,7 @@ class DatabaseHelper {
 
   Future<int> insert(Map<String, dynamic> row) async {
     try {
+
       Database db = await database;
       return await db.insert('users', row);
     } catch (e) {
