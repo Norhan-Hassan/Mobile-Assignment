@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:assignment1/profile_screen.dart';
 import 'package:assignment1/database_helper.dart';
 import 'package:flutter/services.dart';
-
 import 'ApiHandler.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -23,6 +22,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   TextEditingController _idController = TextEditingController();
   File? _image;
   final DatabaseHelper _databaseHelper = DatabaseHelper.instance;
+  final ApiHandler _apiHandler = ApiHandler();
 
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -107,16 +107,38 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         level: _levelController.text,
                         password: _passwordController.text,
                       );
-                      await _databaseHelper.updateRecordByName(widget.user.name, updatedUser.toMap());
-                      if (_image != null) {
-                        await _databaseHelper.saveProfilePhotoPath(updatedUser.name, _image!.path);
+                      // Update user data via API
+                      try {
+                        await _apiHandler.updateUser(updatedUser.name, updatedUser.toMap());
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Profile updated successfully!'),
+                            duration: Duration(seconds: 3),
+                            backgroundColor: Colors.green,
+                          ),
+                        );
+                        // Update the local database after API update
+                        await _databaseHelper.updateRecordByName(widget.user.name, updatedUser.toMap());
+                        if (_image != null) {
+                          await _databaseHelper.saveProfilePhotoPath(updatedUser.name, _image!.path);
+                        }
+                        widget.onUpdate(updatedUser);
+                        Navigator.pop(context);
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Failed to update profile. Please try again.'),
+                            duration: Duration(seconds: 3),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
                       }
-                      widget.onUpdate(updatedUser);
-                      Navigator.pop(context);
                     }
                   },
-                  child: Text('Save Changes',
-                    style: TextStyle(color: Colors.white),),
+                  child: Text(
+                    'Save Changes',
+                    style: TextStyle(color: Colors.white),
+                  ),
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all<Color>(Colors.teal),
                     textStyle: MaterialStateProperty.all<TextStyle>(TextStyle(color: Colors.white)),

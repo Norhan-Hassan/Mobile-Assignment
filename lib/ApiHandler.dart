@@ -86,9 +86,11 @@ class ApiHandler {
     }
   }
 
+  // Update user data via API
   Future<void> updateUser(String name, Map<String, dynamic> updatedData) async {
+  try {
     final String url = '$baseUrl/update/$name';
-    final http.Response response = await http.post(
+    final http.Response response = await http.put( // Use PUT method for updating
       Uri.parse(url),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
@@ -96,10 +98,20 @@ class ApiHandler {
       body: jsonEncode(updatedData),
     );
 
-    if (response.statusCode != 200) {
+    if (response.statusCode == 200) {
+      print("User data updated successfully");
+    } else {
+      print("Failed to update user data");
+      print("Status Code: ${response.statusCode}");
+      print("Response Body: ${response.body}");
       throw Exception('Failed to update user data');
     }
+  } catch (e) {
+    print("Error updating user data: $e");
+    throw Exception('Error updating user data: $e');
   }
+}
+
 
 }
 
