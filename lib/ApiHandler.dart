@@ -90,7 +90,7 @@ class ApiHandler {
   Future<void> updateUser(String name, Map<String, dynamic> updatedData) async {
   try {
     final String url = '$baseUrl/update/$name';
-    final http.Response response = await http.put( // Use PUT method for updating
+    final http.Response response = await http.put(
       Uri.parse(url),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',

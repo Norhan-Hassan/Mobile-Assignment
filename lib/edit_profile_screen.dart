@@ -109,7 +109,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       );
                       // Update user data via API
                       try {
-                        await _apiHandler.updateUser(updatedUser.name, updatedUser.toMap());
+                        await _apiHandler.updateUser(widget.user.name, updatedUser.toMap());
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text('Profile updated successfully!'),
