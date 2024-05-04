@@ -1,3 +1,5 @@
+import 'package:assignment1/favourite_store_screen.dart';
+import 'package:assignment1/stores_screen.dart';
 import 'package:flutter/material.dart';
 import 'ApiHandler.dart';
 import 'database_helper.dart';
@@ -87,6 +89,7 @@ class _LoginFormState extends State<LoginForm> {
                             backgroundColor: Colors.green, // Set color to green
                           ),
                         );
+                        /*
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
@@ -100,6 +103,13 @@ class _LoginFormState extends State<LoginForm> {
                                   password: userData['password']),
                             ),
                           ),
+
+                        );
+
+                         */
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context)=> AllStoresScreen())
                         );
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
