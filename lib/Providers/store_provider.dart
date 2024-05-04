@@ -31,6 +31,7 @@ class StoreProvider extends ChangeNotifier {
     await _databaseHelper.deleteFavoriteStore(store.id);
     notifyListeners();
   }
+
   // Method to toggle favorite status
   void toggleFavoriteStatus(Store store) async {
     if (_favoriteStores.contains(store)) {

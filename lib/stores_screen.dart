@@ -45,7 +45,7 @@ class AllStoresScreen extends StatelessWidget {
                   leading: Image.asset(
                     store.ImagePath,
                     width: 70,
-                    height: 60,
+                    height: 70,
                     fit: BoxFit.cover,
                   ),
                   title: Text(store.name),
@@ -64,20 +64,22 @@ class AllStoresScreen extends StatelessWidget {
                   trailing: IconButton(
                     icon: store.isFavorite
                         ? const Icon(
-                        Icons.favorite,
-                        color: Colors.red,
-                        )
+                      Icons.favorite,
+                      color: Colors.red,
+                    )
                         : const Icon(
                       Icons.favorite_border,
                       color: Colors.red,
-                        ),
+                    ),
                     onPressed: () {
-                      storeProvider.toggleFavoriteStatus(store);
+                      //DO nothing
                     },
                   ),
+
                 );
               },
             );
+
           }
         },
       ),

@@ -1,4 +1,5 @@
 import 'package:assignment1/favourite_store_screen.dart';
+import 'package:assignment1/stores_details_screen.dart';
 import 'package:assignment1/stores_screen.dart';
 import 'package:flutter/material.dart';
 import 'ApiHandler.dart';
@@ -113,7 +114,7 @@ class _LoginFormState extends State<LoginForm> {
                         );
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
+                          const SnackBar(
                             content: Text('User data not found.'),
                             backgroundColor: Colors.red, // Set color to red
                           ),
@@ -121,7 +122,7 @@ class _LoginFormState extends State<LoginForm> {
                       }
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
+                        const SnackBar(
                           content: Text(
                               'Login failed. Please check your credentials.'),
                           backgroundColor: Colors.red, // Set color to red
@@ -135,7 +136,7 @@ class _LoginFormState extends State<LoginForm> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
+                    const Text(
                       'Don\'t have an account? ',
                       style: TextStyle(
                         color: Colors.black87,
@@ -149,7 +150,7 @@ class _LoginFormState extends State<LoginForm> {
                           MaterialPageRoute(builder: (context) => SignupScreen()),
                         );
                       },
-                      child: Text(
+                      child: const Text(
                         'Sign up',
                         style: TextStyle(
                           color: Colors.teal, // Change the color to teal

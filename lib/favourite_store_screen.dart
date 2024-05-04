@@ -33,7 +33,7 @@ class FavoriteStoresScreen extends StatelessWidget {
                   title: Text(store.name),
                   subtitle: Text('Lat: ${store.latitude}, Long: ${store.longitude}'),
                   trailing: IconButton(
-                    icon: Icon(
+                    icon: const Icon(
                         Icons.favorite,
                         color: Colors.red,
                     ) ,
