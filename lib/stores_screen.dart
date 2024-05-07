@@ -1,4 +1,5 @@
 import 'package:assignment1/stores_details_screen.dart';
+import 'package:assignment1/stores_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'Providers/store_provider.dart';

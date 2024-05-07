@@ -47,8 +47,10 @@ class DatabaseHelper {
         await db.execute('''
           CREATE TABLE favorite_stores(
             id INTEGER PRIMARY KEY,
+            user_id INTEGER,
             store_id INTEGER,
-            FOREIGN KEY (store_id) REFERENCES stores(id)
+            FOREIGN KEY (store_id) REFERENCES stores(id),
+            FOREIGN KEY (user_id) REFERENCES users(id)
           )
     ''');
       },
@@ -252,23 +254,35 @@ class DatabaseHelper {
       return [];
     }
   }
-  Future<int> insertFavoriteStore(Store store) async {
+
+  Future<int> insertFavoriteStore(int userId, Store store) async {
     final db = await database;
-    return await db.insert('favorite_stores', {'store_id': store.id});
+    return await db.insert('favorite_stores', {'user_id': userId, 'store_id': store.id});
   }
-  Future<List<Store>> getFavoriteStores() async {
-    final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('favorite_stores');
-    final List<int> storeIds = maps.map<int>((e) => e['store_id']).toList();
-    final List<Store> favoriteStores = [];
-    for (int id in storeIds) {
-      final store = await getStoreById(id);
-      if (store != null) {
-        favoriteStores.add(store);
+
+  Future<List<Store>> getFavoriteStores(int userId) async {
+    try {
+      final db = await database;
+      final List<Map<String, dynamic>> maps = await db.query(
+        'favorite_stores',
+        where: 'user_id = ?',
+        whereArgs: [userId],
+      );
+      final List<int> storeIds = maps.map<int>((e) => e['store_id']).toList();
+      final List<Store> favoriteStores = [];
+      for (int id in storeIds) {
+        final store = await getStoreById(id);
+        if (store != null) {
+          favoriteStores.add(store);
+        }
       }
+      return favoriteStores;
+    } catch (e) {
+      print('Error fetching favorite stores: $e');
+      return []; // Return empty list in case of any error
     }
-    return favoriteStores;
   }
+
   Future<Store?> getStoreById(int id) async {
     final db = await database;
     final List<Map<String, dynamic>> maps =
@@ -284,11 +298,15 @@ class DatabaseHelper {
     }
     return null;
   }
-  Future<int> deleteFavoriteStore(int storeId) async {
+  Future<int> deleteFavoriteStore(int userId, int storeId) async {
     final db = await database;
-    return await db
-        .delete('favorite_stores', where: 'store_id = ?', whereArgs: [storeId]);
+    return await db.delete(
+      'favorite_stores',
+      where: 'user_id = ? AND store_id = ?',
+      whereArgs: [userId, storeId],
+    );
   }
+
 
 
 }
