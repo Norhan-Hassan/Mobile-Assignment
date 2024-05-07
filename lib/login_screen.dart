@@ -1,13 +1,17 @@
 import 'package:assignment1/favourite_store_screen.dart';
 import 'package:assignment1/stores_details_screen.dart';
+import 'package:assignment1/stores_model.dart';
 import 'package:assignment1/stores_screen.dart';
 import 'package:flutter/material.dart';
 import 'ApiHandler.dart';
+import 'Providers/store_provider.dart';
 import 'database_helper.dart';
 import 'profile_screen.dart';
 import 'signup_screen.dart';
 import 'Components/buildTextFormField.dart';
 import 'Components/buildSigninButton.dart';
+import 'package:provider/provider.dart';
+
 
 class LoginForm extends StatefulWidget {
   @override
@@ -83,6 +87,8 @@ class _LoginFormState extends State<LoginForm> {
                           await DatabaseHelper.instance
                               .getUserByName(_nameController.text);
                       if (userData != null) {
+                        int userId = userData['id'];
+                        List<Store> favoriteStores = await DatabaseHelper.instance.getFavoriteStores(userId);
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text('Login successful!'),
@@ -90,24 +96,9 @@ class _LoginFormState extends State<LoginForm> {
                             backgroundColor: Colors.green, // Set color to green
                           ),
                         );
-                        /*
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ProfileScreen(
-                              user: User(
-                                  name: userData['name'],
-                                  email: userData['email'],
-                                  gender: userData['gender'],
-                                  studentId: userData['studentId'],
-                                  level: userData['level'],
-                                  password: userData['password']),
-                            ),
-                          ),
+                        // Set the user ID in StoreProvider
+                        Provider.of<StoreProvider>(context, listen: false).setUserId(userId);
 
-                        );
-
-                         */
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(builder: (context)=> AllStoresScreen())

@@ -33,8 +33,8 @@ class MyApp extends StatelessWidget {
       home:  LoginForm(),
       routes: {
         '/signup': (context) => SignupScreen(),
-        '/store': (context) => AllStoresScreen(),
-        '/favorite_stores': (context) => FavoriteStoresScreen(),
+        //'/store': (context) => AllStoresScreen(),
+        //'/favorite_stores': (context) => FavoriteStoresScreen(),
       },
     );
   }
