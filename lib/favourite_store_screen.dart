@@ -1,6 +1,9 @@
+// favorite_stores_screen.dart
 import 'package:flutter/material.dart';
-import 'Providers/store_provider.dart';
 import 'package:provider/provider.dart';
+import 'Providers/store_provider.dart';
+import 'stores_model.dart';
+import 'Distancescreen.dart'; // Import the DistanceScreen
 
 class FavoriteStoresScreen extends StatelessWidget {
   @override
@@ -38,7 +41,13 @@ class FavoriteStoresScreen extends StatelessWidget {
                           color: Colors.red,
                         ),
                         onPressed: () {
-                          Provider.of<StoreProvider>(context, listen: false).toggleFavoriteStatus(store);
+                          // Navigate to the DistanceScreen when the favorite store is tapped
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => DistanceScreen(favoriteStore: store),
+                            ),
+                          );
                         },
                       ),
                     );
