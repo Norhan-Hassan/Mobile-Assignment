@@ -53,6 +53,7 @@ class _DistanceScreenState extends State<DistanceScreen> {
       appBar: AppBar(
         title: Text('Distance to Favorite Store'),
       ),
+      backgroundColor: Color(0xFFF5F5F5),
       body: Container(
         margin: EdgeInsets.all(20),
         child: Center(
@@ -60,11 +61,14 @@ class _DistanceScreenState extends State<DistanceScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Image.asset(
-                'assets/location.jpg',
-                width: 200,
-                height: 300,
-                fit: BoxFit.cover, // Ensure the image covers the entire container
+              ClipRRect(
+                borderRadius: BorderRadius.zero, 
+                child: Image.asset(
+                  'assets/location.jpg',
+                  width: 280,
+                  height: 300,
+                  fit: BoxFit.cover,
+                ),
               ),
               SizedBox(height: 10),
               Container(
