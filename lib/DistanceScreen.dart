@@ -1,4 +1,3 @@
-// distance_screen.dart
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'stores_model.dart';
@@ -54,19 +53,38 @@ class _DistanceScreenState extends State<DistanceScreen> {
       appBar: AppBar(
         title: Text('Distance to Favorite Store'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (_distanceInMeters != null)
-              Text(
-                'Distance to ${widget.favoriteStore.name}: ${(_distanceInMeters! / 1000).toStringAsFixed(2)} km',
-                style: TextStyle(fontSize: 18),
+      body: Container(
+        margin: EdgeInsets.all(20),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Image.asset(
+                'assets/location.jpg',
+                width: 200,
+                height: 300,
+                fit: BoxFit.cover, // Ensure the image covers the entire container
               ),
-            if (_distanceInMeters == null)
-              CircularProgressIndicator(),
-          ],
+              SizedBox(height: 10),
+              Container(
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.teal.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Text(
+                  _distanceInMeters != null
+                      ? 'Distance to ${widget.favoriteStore.name}: ${(_distanceInMeters! / 1000).toStringAsFixed(2)} km'
+                      : 'Calculating distance...',
+                  style: TextStyle(
+                    fontSize: 19,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

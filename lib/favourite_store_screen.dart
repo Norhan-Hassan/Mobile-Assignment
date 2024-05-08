@@ -37,10 +37,14 @@ class FavoriteStoresScreen extends StatelessWidget {
                       subtitle: Text('Lat: ${store.latitude}, Long: ${store.longitude}'),
                       trailing: IconButton(
                         icon: const Icon(
-                          Icons.favorite,
-                          color: Colors.red,
+                          //Icons.favorite,
+                          Icons.location_on,
+                          color: Colors.blue,
+                          //color: Colors.red,
                         ),
+
                         onPressed: () {
+
                           // Navigate to the DistanceScreen when the favorite store is tapped
                           Navigator.push(
                             context,
